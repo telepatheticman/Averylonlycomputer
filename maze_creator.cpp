@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <cstdlib>
 #include <algorithm>
@@ -14,7 +15,7 @@ int x, y, z;
 p3(int x, int y, int z) : x(x), y(y), z(z) {}
 } typedef point3;
 
-void generate_maze(int x_dim, int y_dim, int z_dim){
+void generate_maze(int x_dim, int y_dim, int z_dim, const char *filename){
 	vector<vector<vector<bool> > > data;
 	data.resize(x_dim);
 	for(int x = 0; x < x_dim; x++){
@@ -67,22 +68,58 @@ void generate_maze(int x_dim, int y_dim, int z_dim){
 
 	/* Create Beginning and End */
 
-	
-
-	for(int z = 0; z < z_dim; z++){
-		cout << z << endl;
-		for(int y = 0; y < y_dim; y++){
-			for(int x = 0; x < x_dim; x++){
-				cout << (data[x][y][z] ? "#" : " ");
+	bool beginning = false, end = false;
+	for(int i = 0; i < 2; i++)
+	while(true){
+		int rand_val = rand_number(0, 2*(x_dim + y_dim));
+		bool opposite = (rand_val - (x_dim+y_dim) >= 0);
+		bool x = (rand_val % (x_dim+y_dim))-x_dim < 0;
+		int val = (rand_val % (x_dim+y_dim)) - (x ? 0 : x_dim);
+		int layer = rand_number(0, z_dim);
+		int dx, dy;
+		if(x){
+			dx = val;
+			dy = (opposite ? y_dim - 1 : 0);
+			if(!data[dx][dy][layer]) continue;
+			if(opposite && !data[dx][dy - 1][layer]){
+				data[dx][dy][layer] = false;
+				break;
+			} else if(!opposite && !data[dx][dy + 1][layer]){
+				data[dx][dy][layer] = false;
+				break;
 			}
-			cout << endl;
+		} else {
+			dx = (opposite ? x_dim - 1 : 0);
+			dy = val;
+			if(!data[dx][dy][layer]) continue;
+			if(opposite && !data[dx - 1][dy][layer]){
+				data[dx][dy][layer] = false;
+				break;
+			} else if(!opposite && !data[dx + 1][dy][layer]){
+				data[dx][dy][layer] = false;
+			}
 		}
+		
 	}
 
+
+	ofstream file;
+	file.open(filename);
+	file << x_dim << " " << y_dim << " " << z_dim << endl;
+	for(int z = 0; z < z_dim; z++){
+		for(int y = 0; y < y_dim; y++){
+			for(int x = 0; x < x_dim; x++){
+				file << (data[x][y][z] ? "#" : " ");
+			}
+			file << endl;
+		}
+		file << endl;
+	}
+	file.close();
 }
 
 int main()
 {
-	generate_maze(20,10,10);
+	generate_maze(20,10,10,"test.file");
 	return 0;
 }
