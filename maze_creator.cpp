@@ -105,7 +105,7 @@ void generate_maze(int x_dim, int y_dim, int z_dim, const char *filename){
 
 	ofstream file;
 	file.open(filename);
-	file << x_dim << " " << y_dim << " " << z_dim << endl;
+	file << y_dim << " " << x_dim << " " << z_dim << endl;
 	for(int z = 0; z < z_dim; z++){
 		for(int y = 0; y < y_dim; y++){
 			for(int x = 0; x < x_dim; x++){
