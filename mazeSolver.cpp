@@ -39,7 +39,7 @@ int findSpace(int r, int c, int d, vector<vector<vector<char> > > *maze, char re
 void showMaze(int r, int c, int d, vector<vector<vector<char> > > *maze, bool solution);
 void generate_maze(int x_dim, int y_dim, int z_dim, const char *filename);
 
-int main(void){
+int main( int argc, char *argv[] ){
 #ifdef __unix__
 timespec ts;
 clock_gettime(CLOCK_REALTIME, &ts);
@@ -66,6 +66,7 @@ srand(ts.tv_nsec);
 #endif
     string generate = "";
     bool gen = true;
+    if(argc < 2)
     while(true){
     cout << "Generate New Map?[y/N] ";
     getline(cin, generate);
@@ -110,8 +111,10 @@ srand(ts.tv_nsec);
     findSpace(x, y, z, &maze, E);
     cout << "Maze to solve" << endl;
     showMaze(x, y, z, &maze, false);
+    if(argc < 3){
     cout << "Show steps?[y/n] ";
     getline(cin, input);
+    } else input = argv[2];
     bool input2 = true;
     if (input == "y" || input == "Y"){
         input2 = true;
