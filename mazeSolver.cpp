@@ -187,6 +187,10 @@ void printStep(int r, int c, int d, vector<vector<vector<char> > > *maze){
         }
         cout << endl;
     }
+    if(step > 10000){
+        cerr << "Timeout" << endl;
+	exit(-1);
+    }
 }
 
 
