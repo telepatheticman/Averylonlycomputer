@@ -1,6 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include <fstream>
+#include <vector>
 #include <string>
 #include <unistd.h>
 
@@ -22,27 +23,35 @@ char up = 'U';
 char down = 'D';
 char solve = '-';
 
-int solveMaze(char maze[row][col][dep]);
-void printStep(int r, int c, int d, char maze[row][col][dep]);
-void directionManager(int r, int c, int d, char maze[row][col][dep]);
-int makeMove(int r, int c, int d, char maze[row][col][dep]);
-bool checkEnd(int r, int c, int d, char maze[row][col][dep]);
-void limitShow(int r, int c, int d, int lim, char maze[row][col][dep], bool solution);
-int findDuder(int r, int c, int d, char maze[row][col][dep]);
-int findDudec(int r, int c, int d, char maze[row][col][dep]);
-int findDuded(int r, int c, int d, char maze[row][col][dep]);
-int findSpace(int r, int c, int d, char maze[row][col][dep], char rep);
-void showMaze(int r, int c, int d, char maze[row][col][dep], bool solution);
+int solveMaze(vector<vector<vector<char> > > maze);
+void printStep(int r, int c, int d, vector<vector<vector<char> > > maze);
+void directionManager(int r, int c, int d, vector<vector<vector<char> > > maze);
+int makeMove(int r, int c, int d, vector<vector<vector<char> > > maze);
+bool checkEnd(int r, int c, int d, vector<vector<vector<char> > > maze);
+void limitShow(int r, int c, int d, int lim, vector<vector<vector<char> > >, bool solution);
+int findDuder(int r, int c, int d, vector<vector<vector<char> > > maze);
+int findDudec(int r, int c, int d, vector<vector<vector<char> > > maze);
+int findDuded(int r, int c, int d, vector<vector<vector<char> > > maze);
+int findSpace(int r, int c, int d, vector<vector<vector<char> > > maze, char rep);
+void showMaze(int r, int c, int d, vector<vector<vector<char> > > maze, bool solution);
 
 int main(void){
     ifstream iFile ("maze.txt");
     string mazeLine = "";
-    char maze[row][col][dep];
-    int a, b, c;
-    iFile >> a;
-    iFile >> b;
-    iFile >> c;
-    cout << a << b << c << endl;
+    int x, y, z;
+    iFile >> x;
+    iFile >> y;
+    iFile >> z;
+    vector<vector<vector<char> > > maze;
+    maze.resize(x);
+    for (int a = 0; a < x; a++){
+        maze[x].resize(y);
+        for (int b = 0; b < y; b++){
+            maze[x][y].resize(z);
+        }
+    }
+
+
     getline(iFile, mazeLine);
     for (int x = 0; x < dep; x ++){
         for (int y = 0; y < row; y ++){
@@ -72,30 +81,26 @@ struct direction{
 
 direction direction;
 
-int solveMaze(char maze[row][col][dep]){
+int solveMaze(vector<vector<vector<char> > > maze){
     findSpace(row, col, dep, maze, Mazer);
     findSpace(row, col, dep, maze, E);
     int r = findDuder(row, col, dep, maze);
     int c = findDudec(row, col, dep, maze);
     int d = findDuded(row, col, dep, maze);
-cout << "hey" << endl;
     directionManager(r, c, d, maze);
     if (checkEnd(r, c, d, maze)){
-        cout << "Maze Solved" << endl;
-//        loadSolution(row, col, dep, maze);
         showMaze(row, col, dep, maze, true);
         return 0;
     }
     else{
         makeMove(r, c, d, maze);
         sleep(1);
-        cout << "im at" << r << c << d <<endl;
         printStep(row, col, d, maze);
     }
     solveMaze(maze);
 }
 
-void printStep(int r, int c, int d, char maze[row][col][dep]){
+void printStep(int r, int c, int d, vector<vector<vector<char> > > maze){
     string line = "";
     for (int x = 0; x < r; x ++){
         for (int y = 0; y < c; y ++){
@@ -107,8 +112,8 @@ void printStep(int r, int c, int d, char maze[row][col][dep]){
 
 
 
-void directionManager(int r, int c, int d, char maze[row][col][dep]){
-    cout << "im at" << r << c << d << " in direction manager" << endl;
+void directionManager(int r, int c, int d, vector<vector<vector<char> > > maze){
+
     direction.North = false;
     direction.East = false;
     direction.South = false;
@@ -166,28 +171,9 @@ void directionManager(int r, int c, int d, char maze[row][col][dep]){
         }
     }
 
-    //debug
-    if (direction.North){
-        cout << "n" << endl;
-    }
-    if (direction.East){
-        cout << "e" << endl;
-    }
-    if (direction.South){
-        cout << "s" << endl;
-    }
-    if (direction.West){
-        cout << "w" << endl;
-    }
-    if (direction.Up){
-        cout << "u" << endl;
-    }
-    if (direction.Down){
-        cout << "d" << endl;
-    }
 }
 
-int makeMove(int r, int c, int d, char maze[row][col][dep]){
+int makeMove(int r, int c, int d, vector<vector<vector<char> > > maze){
     int count = 0;
 
     if (direction.North)
@@ -284,7 +270,7 @@ int makeMove(int r, int c, int d, char maze[row][col][dep]){
     }
 }
 
-bool checkEnd(int r, int c, int d, char maze[row][col][dep]){
+bool checkEnd(int r, int c, int d, vector<vector<vector<char> > > maze){
     if (direction.North){
         if (maze[r - 1][c][d] == E){
             return true;
@@ -318,31 +304,7 @@ bool checkEnd(int r, int c, int d, char maze[row][col][dep]){
     return false;
 }
 
-//bool untraversed(bool direction, int r, int c, int d, int count, int cr, int cc, int cd, char maze[row][col][dep]){
-//    cout << "looks like terrain in front of me" << endl;
-//    if (direction && maze[r + cr][c + cc][d + cd] == P) {
-//
-//        if (count > 2)
-//            maze[r][c][d] = forks;
-//        else
-//            maze[r][c][d] = y;
-//        maze[r + cr][c + cc][d + cd] = Mazer;
-//        return true;
-//    }
-//    return false;
-//}
-
-//bool traversed(bool direction, int r, int c, int d, int cr, int cc, int cd, char maze[row][col][dep]){
-//    if (direction && (maze[r + cr][c + cc][d + cd] == y || maze[r + cr][c + cc][d + cd] == forks)){
-//        maze[r][c][d] = n;
-//        maze[r + cr][c + cc][d + cd] = Mazer;
-//        return true;
-//    } else{
-//        return false;
-//    }
-//}
-
-int findDuder(int r, int c, int d, char maze[row][col][dep]){
+int findDuder(int r, int c, int d, vector<vector<vector<char> > > maze){
     for (int x = 0; x < d; x++){
         for (int y = 0; y < r; y++){
             for (int z = 0; z < c; z++){
@@ -354,7 +316,7 @@ int findDuder(int r, int c, int d, char maze[row][col][dep]){
     }
 }
 
-int findDudec(int r, int c, int d, char maze[row][col][dep]){
+int findDudec(int r, int c, int d, vector<vector<vector<char> > > maze){
     for (int x = 0; x < d; x++){
         for (int y = 0; y < r; y++){
             for (int z = 0; z < c; z++){
@@ -366,7 +328,7 @@ int findDudec(int r, int c, int d, char maze[row][col][dep]){
     }
 }
 
-int findDuded(int r, int c, int d, char maze[row][col][dep]){
+int findDuded(int r, int c, int d, vector<vector<vector<char> > > maze){
     for (int x = 0; x < d; x++){
         for (int y = 0; y < r; y++){
             for (int z = 0; z < c; z++){
@@ -378,7 +340,7 @@ int findDuded(int r, int c, int d, char maze[row][col][dep]){
     }
 }
 
-int findSpace(int r, int c, int d, char maze[row][col][dep], char rep){
+int findSpace(int r, int c, int d, vector<vector<vector<char> > > maze, char rep){
     for (int x = 0; x < d; x++){
         for (int y = 0; y < c; y++){
             for (int z = 0; z < r; z++){
@@ -391,7 +353,7 @@ int findSpace(int r, int c, int d, char maze[row][col][dep], char rep){
     }
 }
 
-void showMaze(int r, int c, int d, char maze[row][col][dep], bool solution){
+void showMaze(int r, int c, int d, vector<vector<vector<char> > > maze, bool solution){
     if (c >= 10 && c <= 20){
         limitShow(r, c, d, 4, maze, solution);
     }
@@ -403,7 +365,7 @@ void showMaze(int r, int c, int d, char maze[row][col][dep], bool solution){
     }
 }
 
-void limitShow(int r, int c, int d, int lim, char maze[row][col][dep], bool solution){
+void limitShow(int r, int c, int d, int lim, vector<vector<vector<char> > > maze, bool solution){
     int w = d;
     int layer = 0;
     int moveup = 0;
