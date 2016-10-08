@@ -23,17 +23,17 @@ char up = 'U';
 char down = 'D';
 char solve = '-';
 
-int solveMaze(vector<vector<vector<char> > > maze);
-void printStep(int r, int c, int d, vector<vector<vector<char> > > maze);
-void directionManager(int r, int c, int d, vector<vector<vector<char> > > maze);
-int makeMove(int r, int c, int d, vector<vector<vector<char> > > maze);
-bool checkEnd(int r, int c, int d, vector<vector<vector<char> > > maze);
-void limitShow(int r, int c, int d, int lim, vector<vector<vector<char> > >, bool solution);
-int findDuder(int r, int c, int d, vector<vector<vector<char> > > maze);
-int findDudec(int r, int c, int d, vector<vector<vector<char> > > maze);
-int findDuded(int r, int c, int d, vector<vector<vector<char> > > maze);
-int findSpace(int r, int c, int d, vector<vector<vector<char> > > maze, char rep);
-void showMaze(int r, int c, int d, vector<vector<vector<char> > > maze, bool solution);
+int solveMaze(vector<vector<vector<char> > > *maze);
+void printStep(int r, int c, int d, vector<vector<vector<char> > > *maze);
+void directionManager(int r, int c, int d, vector<vector<vector<char> > > *maze);
+int makeMove(int r, int c, int d, vector<vector<vector<char> > > *maze);
+bool checkEnd(int r, int c, int d, vector<vector<vector<char> > > *maze);
+void limitShow(int r, int c, int d, int lim, vector<vector<vector<char> > > *maze, bool solution);
+int findDuder(int r, int c, int d, vector<vector<vector<char> > > *maze);
+int findDudec(int r, int c, int d, vector<vector<vector<char> > > *maze);
+int findDuded(int r, int c, int d, vector<vector<vector<char> > > *maze);
+int findSpace(int r, int c, int d, vector<vector<vector<char> > > *maze, char rep);
+void showMaze(int r, int c, int d, vector<vector<vector<char> > > *maze, bool solution);
 
 int main(void){
     ifstream iFile ("maze.txt");
@@ -62,11 +62,11 @@ int main(void){
         }
         getline(iFile, mazeLine);
     }
-    findSpace(row, col, dep, maze, Mazer);
-    findSpace(row, col, dep, maze, E);
+    findSpace(row, col, dep, &maze, Mazer);
+    findSpace(row, col, dep, &maze, E);
     cout << "Maze to solve" << endl;
-    showMaze(row, col, dep, maze, false);
-    solveMaze(maze);
+    showMaze(row, col, dep, &maze, false);
+    solveMaze(&maze);
 }
 
 struct direction{
@@ -80,7 +80,7 @@ struct direction{
 
 direction direction;
 
-int solveMaze(vector<vector<vector<char> > > maze){
+int solveMaze(vector<vector<vector<char> > > *maze){
     findSpace(row, col, dep, maze, Mazer);
     findSpace(row, col, dep, maze, E);
     int r = findDuder(row, col, dep, maze);
@@ -99,11 +99,11 @@ int solveMaze(vector<vector<vector<char> > > maze){
     solveMaze(maze);
 }
 
-void printStep(int r, int c, int d, vector<vector<vector<char> > > maze){
+void printStep(int r, int c, int d, vector<vector<vector<char> > > *maze){
     string line = "";
     for (int x = 0; x < r; x ++){
         for (int y = 0; y < c; y ++){
-            cout << maze[x][y][d];
+            cout << (*maze)[x][y][d];
         }
         cout << endl;
     }
@@ -111,7 +111,7 @@ void printStep(int r, int c, int d, vector<vector<vector<char> > > maze){
 
 
 
-void directionManager(int r, int c, int d, vector<vector<vector<char> > > maze){
+void directionManager(int r, int c, int d, vector<vector<vector<char> > > *maze){
 
     direction.North = false;
     direction.East = false;
@@ -140,39 +140,39 @@ void directionManager(int r, int c, int d, vector<vector<vector<char> > > maze){
     }
 
     if (direction.North){
-        if (maze[r - 1][c][d] == W || maze[r - 1][c][d] == n){
+        if ((*maze)[r - 1][c][d] == W || (*maze)[r - 1][c][d] == n){
             direction.North = false;
         }
     }
     if (direction.South){
-        if (maze[r + 1][c][d] == W || maze[r + 1][c][d] == n){
+        if ((*maze)[r + 1][c][d] == W || (*maze)[r + 1][c][d] == n){
             direction.South = false;
         }
     }
     if (direction.East){
-        if (maze[r][c + 1][d] == W || maze[r][c + 1][d] == n){
+        if ((*maze)[r][c + 1][d] == W || (*maze)[r][c + 1][d] == n){
             direction.East = false;
         }
     }
     if (direction.West){
-        if (maze[r][c - 1][d] == W || maze[r][c - 1][d] == n){
+        if ((*maze)[r][c - 1][d] == W || (*maze)[r][c - 1][d] == n){
             direction.West = false;
         }
     }
     if (direction.Up){
-        if (maze[r][c][d + 1] == W || maze[r][c][d + 1] == n){
+        if ((*maze)[r][c][d + 1] == W || (*maze)[r][c][d + 1] == n){
             direction.Up = false;
         }
     }
     if (direction.Down){
-        if (maze[r][c][d - 1] == W || maze[r][c][d - 1] == n){
+        if ((*maze)[r][c][d - 1] == W || (*maze)[r][c][d - 1] == n){
             direction.Down = false;
         }
     }
 
 }
 
-int makeMove(int r, int c, int d, vector<vector<vector<char> > > maze){
+int makeMove(int r, int c, int d, vector<vector<vector<char> > > *maze){
     int count = 0;
 
     if (direction.North)
@@ -188,126 +188,126 @@ int makeMove(int r, int c, int d, vector<vector<vector<char> > > maze){
     if (direction.Down)
         count++;
 
-    if (direction.North && maze[r - 1][c][d] == P){
+    if (direction.North && (*maze)[r - 1][c][d] == P){
             if (count > 2)
-                maze[r][c][d] = forks;
+                (*maze)[r][c][d] = forks;
             else
-                maze[r][c][d] = y;
-            maze[r - 1][c][d] = Mazer;
+                (*maze)[r][c][d] = y;
+            (*maze)[r - 1][c][d] = Mazer;
             return 0;
     }
-    if (direction.East && maze[r][c + 1][d] == P){
+    if (direction.East && (*maze)[r][c + 1][d] == P){
         if (count > 2)
-            maze[r][c][d] = forks;
+            (*maze)[r][c][d] = forks;
         else
-            maze[r][c][d] = y;
-        maze[r][c + 1][d] = Mazer;
+            (*maze)[r][c][d] = y;
+        (*maze)[r][c + 1][d] = Mazer;
         return 0;
     }
-    if (direction.South && maze[r + 1][c][d] == P){
+    if (direction.South && (*maze)[r + 1][c][d] == P){
         if (count > 2)
-            maze[r][c][d] = forks;
+            (*maze)[r][c][d] = forks;
         else
-            maze[r][c][d] = y;
-        maze[r + 1][c][d] = Mazer;
+            (*maze)[r][c][d] = y;
+        (*maze)[r + 1][c][d] = Mazer;
         return 0;
     }
-    if (direction.West && maze[r][c - 1][d] == P){
+    if (direction.West && (*maze)[r][c - 1][d] == P){
         if (count > 2)
-            maze[r][c][d] = forks;
+            (*maze)[r][c][d] = forks;
         else
-            maze[r][c][d] = y;
-        maze[r][c - 1][d] = Mazer;
+            (*maze)[r][c][d] = y;
+        (*maze)[r][c - 1][d] = Mazer;
         return 0;
     }
-    if (direction.Up && maze[r][c][d + 1] == P){
+    if (direction.Up && (*maze)[r][c][d + 1] == P){
         if (count > 2)
-            maze[r][c][d] = forks;
+            (*maze)[r][c][d] = forks;
         else
-            maze[r][c][d] = y;
-        maze[r][c][d + 1] = Mazer;
+            (*maze)[r][c][d] = y;
+        (*maze)[r][c][d + 1] = Mazer;
         return 0;
     }
-    if (direction.Down && maze[r][c][d - 1] == P){
+    if (direction.Down && (*maze)[r][c][d - 1] == P){
         if (count > 2)
-            maze[r][c][d] = forks;
+            (*maze)[r][c][d] = forks;
         else
-            maze[r][c][d] = y;
-        maze[r][c][d - 1] = Mazer;
+            (*maze)[r][c][d] = y;
+        (*maze)[r][c][d - 1] = Mazer;
         return 0;
     }
 
-    if (direction.North && (maze[r - 1][c][d] == y || maze[r - 1][c][d] == forks)){
-        maze[r][c][d] = n;
-        maze[r - 1][c][d] = Mazer;
+    if (direction.North && ((*maze)[r - 1][c][d] == y || (*maze)[r - 1][c][d] == forks)){
+        (*maze)[r][c][d] = n;
+        (*maze)[r - 1][c][d] = Mazer;
         return 0;
     }
-    if (direction.East && (maze[r][c + 1][d] == y || maze[r][c + 1][d] == forks)){
-        maze[r][c][d] = n;
-        maze[r][c + 1][d] = Mazer;
+    if (direction.East && ((*maze)[r][c + 1][d] == y || (*maze)[r][c + 1][d] == forks)){
+        (*maze)[r][c][d] = n;
+        (*maze)[r][c + 1][d] = Mazer;
         return 0;
     }
-    if (direction.South && (maze[r + 1][c][d] == y || maze[r + 1][c][d] == forks)){
-        maze[r][c][d] = n;
-        maze[r + 1][c][d] = Mazer;
+    if (direction.South && ((*maze)[r + 1][c][d] == y || (*maze)[r + 1][c][d] == forks)){
+        (*maze)[r][c][d] = n;
+        (*maze)[r + 1][c][d] = Mazer;
         return 0;
     }
-    if (direction.West && (maze[r][c - 1][d] == y || maze[r][c - 1][d] == forks)){
-        maze[r][c][d] = n;
-        maze[r][c - 1][d] = Mazer;
+    if (direction.West && ((*maze)[r][c - 1][d] == y || (*maze)[r][c - 1][d] == forks)){
+        (*maze)[r][c][d] = n;
+        (*maze)[r][c - 1][d] = Mazer;
         return 0;
     }
-    if (direction.Up && (maze[r][c][d + 1] == y || maze[r][c][d + 1] == forks)){
-        maze[r][c][d] = n;
-        maze[r][c][d + 1] = Mazer;
+    if (direction.Up && ((*maze)[r][c][d + 1] == y || (*maze)[r][c][d + 1] == forks)){
+        (*maze)[r][c][d] = n;
+        (*maze)[r][c][d + 1] = Mazer;
         return 0;
     }
-    if (direction.Down && (maze[r][c][d - 1] == y || maze[r][c][d - 1] == forks)){
-        maze[r][c][d] = n;
-        maze[r][c][d - 1] = Mazer;
+    if (direction.Down && ((*maze)[r][c][d - 1] == y || (*maze)[r][c][d - 1] == forks)){
+        (*maze)[r][c][d] = n;
+        (*maze)[r][c][d - 1] = Mazer;
         return 0;
     }
 }
 
-bool checkEnd(int r, int c, int d, vector<vector<vector<char> > > maze){
+bool checkEnd(int r, int c, int d, vector<vector<vector<char> > > *maze){
     if (direction.North){
-        if (maze[r - 1][c][d] == E){
+        if ((*maze)[r - 1][c][d] == E){
             return true;
         }
     }
     if (direction.East){
-        if (maze[r][c + 1][d] == E){
+        if ((*maze)[r][c + 1][d] == E){
             return true;
         }
     }
     if (direction.South){
-        if (maze[r + 1][c][d] == E){
+        if ((*maze)[r + 1][c][d] == E){
             return true;
         }
     }
     if (direction.West){
-        if (maze[r][c - 1][d] == E){
+        if ((*maze)[r][c - 1][d] == E){
             return true;
         }
     }
     if (direction.Up){
-        if (maze[r][c][d + 1] == E){
+        if ((*maze)[r][c][d + 1] == E){
             return true;
         }
     }
     if (direction.Down){
-        if (maze[r-1][c][d - 1] == E){
+        if ((*maze)[r-1][c][d - 1] == E){
             return true;
         }
     }
     return false;
 }
 
-int findDuder(int r, int c, int d, vector<vector<vector<char> > > maze){
+int findDuder(int r, int c, int d, vector<vector<vector<char> > > *maze){
     for (int x = 0; x < d; x++){
         for (int y = 0; y < r; y++){
             for (int z = 0; z < c; z++){
-                if (maze[y][z][x] == Mazer){
+                if ((*maze)[y][z][x] == Mazer){
                     return y;
                 }
             }
@@ -315,11 +315,11 @@ int findDuder(int r, int c, int d, vector<vector<vector<char> > > maze){
     }
 }
 
-int findDudec(int r, int c, int d, vector<vector<vector<char> > > maze){
+int findDudec(int r, int c, int d, vector<vector<vector<char> > > *maze){
     for (int x = 0; x < d; x++){
         for (int y = 0; y < r; y++){
             for (int z = 0; z < c; z++){
-                if (maze[y][z][x] == Mazer){
+                if ((*maze)[y][z][x] == Mazer){
                     return z;
                 }
             }
@@ -327,11 +327,11 @@ int findDudec(int r, int c, int d, vector<vector<vector<char> > > maze){
     }
 }
 
-int findDuded(int r, int c, int d, vector<vector<vector<char> > > maze){
+int findDuded(int r, int c, int d, vector<vector<vector<char> > > *maze){
     for (int x = 0; x < d; x++){
         for (int y = 0; y < r; y++){
             for (int z = 0; z < c; z++){
-                if (maze[y][z][x] == Mazer){
+                if ((*maze)[y][z][x] == Mazer){
                     return x;
                 }
             }
@@ -339,12 +339,12 @@ int findDuded(int r, int c, int d, vector<vector<vector<char> > > maze){
     }
 }
 
-int findSpace(int r, int c, int d, vector<vector<vector<char> > > maze, char rep){
+int findSpace(int r, int c, int d, vector<vector<vector<char> > > *maze, char rep){
     for (int x = 0; x < d; x++){
         for (int y = 0; y < c; y++){
             for (int z = 0; z < r; z++){
-                if (maze[z][y][x] == P && (y - 1 == -1 || y + 1 == c || z - 1 == -1 || z + 1 == r)){
-                    maze[z][y][x] = rep;
+                if ((*maze)[z][y][x] == P && (y - 1 == -1 || y + 1 == c || z - 1 == -1 || z + 1 == r)){
+                    (*maze)[z][y][x] = rep;
                     return 0;
                 }
             }
@@ -352,7 +352,7 @@ int findSpace(int r, int c, int d, vector<vector<vector<char> > > maze, char rep
     }
 }
 
-void showMaze(int r, int c, int d, vector<vector<vector<char> > > maze, bool solution){
+void showMaze(int r, int c, int d, vector<vector<vector<char> > > *maze, bool solution){
     if (c >= 10 && c <= 20){
         limitShow(r, c, d, 4, maze, solution);
     }
@@ -364,7 +364,7 @@ void showMaze(int r, int c, int d, vector<vector<vector<char> > > maze, bool sol
     }
 }
 
-void limitShow(int r, int c, int d, int lim, vector<vector<vector<char> > > maze, bool solution){
+void limitShow(int r, int c, int d, int lim, vector<vector<vector<char> > > *maze, bool solution){
     int w = d;
     int layer = 0;
     int moveup = 0;
@@ -378,17 +378,17 @@ void limitShow(int r, int c, int d, int lim, vector<vector<vector<char> > > maze
                 for (int y = 0; y < lim; y ++){
                     for (int z = 0; z < c; z ++){
                         if (solution){
-                            if (maze[x][z][y + moveup] == 'y' || maze[x][z][y + moveup] == forks){
-                                maze[x][z][y + moveup] = solve;
+                            if ((*maze)[x][z][y + moveup] == 'y' || (*maze)[x][z][y + moveup] == forks){
+                                (*maze)[x][z][y + moveup] = solve;
                             }
-                            else if (maze[x][z][y + moveup] == n){
-                                maze[x][z][y + moveup] = P;
+                            else if ((*maze)[x][z][y + moveup] == n){
+                                (*maze)[x][z][y + moveup] = P;
                             }
                             else{
-                                maze[x][z][y + moveup] = maze[x][z][y + moveup];
+                                (*maze)[x][z][y + moveup] = (*maze)[x][z][y + moveup];
                             }
                         }
-                        cout << maze[x][z][y + moveup];
+                        cout << (*maze)[x][z][y + moveup];
                     }
                     cout << " ";
                 }
@@ -407,17 +407,17 @@ void limitShow(int r, int c, int d, int lim, vector<vector<vector<char> > > maze
             for (int y = 0; y < d % lim; y ++){
                 for (int z = 0; z < c; z ++){
                     if (solution){
-                        if (maze[x][z][y + moveup] == 'y' || maze[x][z][y + moveup] == forks){
-                            maze[x][z][y + moveup] = solve;
+                        if ((*maze)[x][z][y + moveup] == 'y' || (*maze)[x][z][y + moveup] == forks){
+                            (*maze)[x][z][y + moveup] = solve;
                         }
-                        else if (maze[x][z][y + moveup] == n){
-                            maze[x][z][y + moveup] = P;
+                        else if ((*maze)[x][z][y + moveup] == n){
+                            (*maze)[x][z][y + moveup] = P;
                         }
                         else{
-                            maze[x][z][y + moveup] = maze[x][z][y + moveup];
+                            (*maze)[x][z][y + moveup] = (*maze)[x][z][y + moveup];
                         }
                     }
-                    cout << maze[x][z][y + moveup];
+                    cout << (*maze)[x][z][y + moveup];
                 }
                 cout << " ";
             }
