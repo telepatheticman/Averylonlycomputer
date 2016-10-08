@@ -120,6 +120,7 @@ void generate_maze(int x_dim, int y_dim, int z_dim, const char *filename){
 
 int main()
 {
-	generate_maze(20,10,10,"test.file");
+	srand(80);
+	generate_maze(20,10,10,"maze.txt");
 	return 0;
 }
